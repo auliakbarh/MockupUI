@@ -6,6 +6,9 @@ import config from '../config';
 import * as screenName from '../router/screenNames';
 import {isRxDatabase, isRxCollection} from 'rxdb';
 
+import seeder from '../utils/dummy-data/seeder10k.json';
+import schemas from "../database/schemas";
+
 export default ({navigation, route, database}) => {
   const [isSync, setIsSync] = React.useState(false);
   return (
@@ -30,15 +33,35 @@ export default ({navigation, route, database}) => {
         placeholder={'Sync'}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.buttonText}
-        onPress={() => {
-            const db = database;
-            console.log('database', isRxDatabase(db));
-            console.log('database', isRxCollection(db.abl));
+        onPress={async () => {
+            setIsSync(true)
+            console.log('database', isRxDatabase(database));
+            console.log('isRxCollection abl:', isRxCollection(database.abl));
+
+            if(!isRxCollection(database.abl)){
+                await database.collection({
+                    name: 'abl',
+                    schema: schemas.ABL,
+                })
+
+                console.log('isRxCollection abl (!):', isRxCollection(database.abl));
+            }
+
+            await database.abl.pouch.bulkDocs({docs: seeder})
+
+            console.log('done do bulkDocs');
+
+            setIsSync(false)
         }}
         disabled={isSync}
       />
       <Button
-        onPress={() => console.log('reset database function not set yet')}
+        onPress={async () => {
+            console.log('run remove collection')
+
+            const test = await database.abl.destroy();;
+            console.log('result:', test);
+        }}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.saveButtonText}
         placeholder={'Reset Database'}
