@@ -4,6 +4,8 @@ import Button from '../components/Button';
 import scale from '../config/scale';
 import config from '../config';
 import * as screenName from '../router/screenNames';
+import batchInsert from '../utils/insertData';
+import deleteTable from '../utils/deleteTable';
 
 export default ({navigation, route, database}) => {
   const [isSync, setIsSync] = React.useState(false);
@@ -26,14 +28,14 @@ export default ({navigation, route, database}) => {
         onPress={() => navigation.navigate(screenName.BUMA)}
       />
       <Button
-        placeholder={'Sync'}
+        placeholder={'Batch Insert'}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.buttonText}
-        onPress={() => console.log('sync function not set yet')}
+        onPress={() => batchInsert(10)}
         disabled={isSync}
       />
       <Button
-        onPress={() => console.log('reset database function not set yet')}
+        onPress={() => deleteTable()}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.saveButtonText}
         placeholder={'Reset Database'}

@@ -6,7 +6,7 @@ import config from '../../../config';
 import {getDate, getTime} from '../../../utils/DateFormat';
 import styles from '../styles/ListHazardStyle';
 
-export const HazardItem = ({hazards, onPress}) => (
+const HazardItem = ({hazards, onPress}) => (
   <TouchableOpacity onPress={() => onPress(hazards)} style={styles.listHazard}>
     <View style={styles.iconListHazard}>
       <Icon
@@ -20,8 +20,9 @@ export const HazardItem = ({hazards, onPress}) => (
       <Text>{`${hazards.lokasi} - ${hazards.subLokasi}`}</Text>
     </View>
     <View style={styles.timeListHazard}>
-      <Text style={styles.time}>{getDate(hazards.waktuLaporan)}</Text>
-      <Text style={styles.time}>{getTime(hazards.waktuLaporan)}</Text>
+      <Text style={styles.time}>{getDate(hazards.createdAt)}</Text>
+      <Text style={styles.time}>{getTime(hazards.createdAt)}</Text>
     </View>
   </TouchableOpacity>
 );
+export default HazardItem

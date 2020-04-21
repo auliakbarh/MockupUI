@@ -8,7 +8,7 @@ import * as screenName from '../../router/screenNames';
 const HazardDetail = ({navigation, route}) => {
   try {
     const {
-      waktuLaporan,
+      createdAt,
       judulHazard,
       detailLaporan,
       lokasi,
@@ -21,9 +21,9 @@ const HazardDetail = ({navigation, route}) => {
         <View style={styles.detailItem}>
           <Text style={styles.label}>Waktu:</Text>
           <Text style={styles.detail}>{`${getDate(
-            waktuLaporan,
+            createdAt,
             true,
-          )} ${getTime(waktuLaporan)}`}</Text>
+          )} ${getTime(createdAt)}`}</Text>
         </View>
 
         <View style={styles.detailItem}>
