@@ -4,7 +4,7 @@ import Button from '../components/Button';
 import scale from '../config/scale';
 import config from '../config';
 import * as screenName from '../router/screenNames';
-import {isRxDatabase} from 'rxdb';
+import {isRxDatabase, isRxCollection} from 'rxdb';
 
 export default ({navigation, route, database}) => {
   const [isSync, setIsSync] = React.useState(false);
@@ -30,11 +30,10 @@ export default ({navigation, route, database}) => {
         placeholder={'Sync'}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.buttonText}
-        onPress={async () => {
-            console.log('sync function not set yet')
-            const db = await database();
+        onPress={() => {
+            const db = database;
             console.log('database', isRxDatabase(db));
-            console.log('database', db);
+            console.log('database', isRxCollection(db.abl));
         }}
         disabled={isSync}
       />
