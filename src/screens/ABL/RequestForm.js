@@ -28,7 +28,24 @@ const RequestForm = ({database, navigation, route}) => {
 
     console.log('data:', data);
 
-    let result = false;
+    const dump = await database.abl.dump();
+    const id = (dump.docs.length + 1).toString();
+
+    let result = await database.abl.insert({
+      id,
+      judulRequest: data.judulRequest,
+      detailLaporan: 'Dummy detail laporan',
+      lokasi: 'dummy location',
+      subLokasi: 'dummy sublocation',
+      detailLokasi: 'dummy detail lokasi',
+      createdAt: data.createdAt.toString(),
+      createdBy: 'dummy created by',
+      updatedAt: data.updatedAt.toString(),
+      updatedBy: 'dummy updated by',
+      deletedBy: '',
+    });
+
+    console.log('result', result);
 
     try {
       if (result) {
