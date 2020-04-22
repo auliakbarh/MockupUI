@@ -67,7 +67,7 @@ export default ({navigation, route, database}) => {
                 })
                 console.log('isRxCollection abl:', isRxCollection(database.abl));
             }
-            if(!isRxCollection(database.abl)){
+            if(!isRxCollection(database.buma)){
                 await database.collection({
                     name: 'buma',
                     schema: schemas.BUMA,
