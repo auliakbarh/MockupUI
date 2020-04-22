@@ -53,7 +53,7 @@ const HazardFormComponent = ({database, navigation, route}) => {
       detailLokasi,
     };
 
-    let newHazard = null;
+    let newHazard = false;
 
     function validation(data, isNumber = false) {
       if (isNumber && typeof data === 'number') {
@@ -72,7 +72,14 @@ const HazardFormComponent = ({database, navigation, route}) => {
           validation(data.detailLokasi)
       ) {
         console.log('do insert record to database.');
-        newHazard = false;
+        newHazard = await database.buma.insert({
+          waktuLaporan: getUNIXTS(),
+          judulHazard,
+          detailLaporan,
+          lokasi,
+          subLokasi,
+          detailLokasi,
+        });
       }
     } catch (e) {
       console.log(e);
@@ -154,7 +161,7 @@ const HazardFormComponent = ({database, navigation, route}) => {
         console.log('isRxCollection buma:', isRxCollection(database.buma));
       }
 
-      const doneGenerating = await database.abl.pouch.bulkDocs({docs: seederBUMA});
+      const doneGenerating = await database.buma.pouch.bulkDocs({docs: seederBUMA});
 
       if (doneGenerating) {
         setIsGenerating(false);
