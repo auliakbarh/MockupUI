@@ -6,7 +6,7 @@ import config from '../config';
 import * as screenName from '../router/screenNames';
 import {isRxDatabase, isRxCollection} from 'rxdb';
 
-import seeder from '../utils/dummy-data/seeder10k.json';
+import seederABL from '../utils/dummy-data/seeder10k.json';
 import schemas from "../database/schemas";
 
 export default ({navigation, route, database}) => {
@@ -43,11 +43,10 @@ export default ({navigation, route, database}) => {
                     name: 'abl',
                     schema: schemas.ABL,
                 })
-
                 console.log('isRxCollection abl (!):', isRxCollection(database.abl));
             }
 
-            await database.abl.pouch.bulkDocs({docs: seeder})
+            await database.abl.pouch.bulkDocs({docs: seederABL})
 
             console.log('done do bulkDocs');
 
@@ -59,17 +58,23 @@ export default ({navigation, route, database}) => {
         onPress={async () => {
             console.log('run remove collection')
 
-            const test = await database.abl.remove();
+            await database.abl.remove();
+            await database.buma.remove();
             if(!isRxCollection(database.abl)){
                 await database.collection({
                     name: 'abl',
                     schema: schemas.ABL,
                 })
-
-                console.log('isRxCollection abl (!):', isRxCollection(database.abl));
+                console.log('isRxCollection abl:', isRxCollection(database.abl));
             }
+            if(!isRxCollection(database.abl)){
+                await database.collection({
+                    name: 'buma',
+                    schema: schemas.BUMA,
+                })
 
-            console.log('result:', test);
+                console.log('isRxCollection buma:', isRxCollection(database.buma));
+            }
         }}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.saveButtonText}
