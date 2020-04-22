@@ -59,7 +59,16 @@ export default ({navigation, route, database}) => {
         onPress={async () => {
             console.log('run remove collection')
 
-            const test = await database.abl.destroy();;
+            const test = await database.abl.remove();
+            if(!isRxCollection(database.abl)){
+                await database.collection({
+                    name: 'abl',
+                    schema: schemas.ABL,
+                })
+
+                console.log('isRxCollection abl (!):', isRxCollection(database.abl));
+            }
+
             console.log('result:', test);
         }}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
