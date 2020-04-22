@@ -6,8 +6,9 @@ import scale from '../../config/scale';
 import EnhancedRequestItem from './observable/ListRequest/EnhancedRequestItem';
 import * as screenName from '../../router/screenNames';
 
-const ListRequest = ({navigation, route, database, listRequest=[]}) => {
+const ListRequest = ({navigation, route, database}) => {
   const [isFetching, setIsFetching] = React.useState(false);
+  const [listRequest, setListRequest] = React.useState([]);
 
   const goToDetail = (detail, navigation) => {
     navigation.navigate(screenName.REQUEST_DETAIL_SCREEN, {
@@ -18,6 +19,21 @@ const ListRequest = ({navigation, route, database, listRequest=[]}) => {
   const refresh = async database => {
     try {
       setIsFetching(true);
+      let result = null;
+      console.log('listRequest.length', listRequest.length);
+      try{
+        result = await database.abl.pouch.find({selector:{},
+          limit:5,
+          skip: listRequest.length
+        });
+      }catch (e) {
+        console.log(e)
+      }
+
+      console.log('result find', result);
+      // let dump = await database.abl.dump();
+      // console.log('dump data', dump.docs.length)
+      setListRequest(listRequest.concat(result.docs))
       setIsFetching(false);
       return null;
     } catch (e) {
