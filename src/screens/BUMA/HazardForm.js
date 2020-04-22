@@ -19,6 +19,10 @@ import Button from '../../components/Button';
 import endpoint from '../../config/endpoint';
 import {getUNIXTS} from '../../utils/UNIXTS';
 
+import seederBUMA from '../../utils/dummy-data/seeder1000.json';
+import {isRxCollection} from "rxdb";
+import schemas from "../../database/schemas";
+
 const myIcon = (
   <Icon
     name="hazard-lights"
@@ -141,7 +145,16 @@ const HazardFormComponent = ({database, navigation, route}) => {
     try {
       setIsGenerating(true);
 
-      const doneGenerating = false;
+      if(!isRxCollection(database.buma)){
+        await database.collection({
+          name: 'buma',
+          schema: schemas.BUMA,
+        })
+
+        console.log('isRxCollection buma:', isRxCollection(database.buma));
+      }
+
+      const doneGenerating = await database.abl.pouch.bulkDocs({docs: seederBUMA});
 
       if (doneGenerating) {
         setIsGenerating(false);
