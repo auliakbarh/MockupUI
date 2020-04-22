@@ -10,8 +10,9 @@ import EnhancedHazardItem from './observable/ListHazard/EnhancedHazardItem';
 
 import {increment} from '../../store/actions/defaultAction';
 
-const ListHazard = ({database, navigation, route, listHazard, increment, regular}) => {
+const ListHazard = ({database, navigation, route, increment, regular}) => {
   const [isFetching, setIsFetching] = React.useState(false);
+  const [listHazard, setListHazard] = React.useState([]);
 
   const goToDetail = (detail, navigation) => {
     navigation.navigate(screenName.HAZARD_DETAIL_SCREEN, {
@@ -42,6 +43,42 @@ const ListHazard = ({database, navigation, route, listHazard, increment, regular
 
   const refresh = async database => {
     setIsFetching(true);
+    let result = null;
+    console.log('listHazard.length', listHazard.length);
+    try{
+      result = await database.buma.pouch.find({selector:{},
+        limit:20,
+        skip: 0
+      });
+    }catch (e) {
+      console.log(e)
+    }
+
+    // console.log('result find', result);
+    // let dump = await database.buma.dump();
+    // console.log('dump data', dump.docs.length)
+    setListHazard(result.docs)
+    setIsFetching(false);
+    return null;
+  };
+
+  const onEndReached = async database => {
+    setIsFetching(true);
+    let result = null;
+    console.log('listHazard.length', listHazard.length);
+    try{
+      result = await database.buma.pouch.find({selector:{},
+        limit:20,
+        skip: listHazard.length
+      });
+    }catch (e) {
+      console.log(e)
+    }
+
+    // console.log('result find', result);
+    // let dump = await database.buma.dump();
+    // console.log('dump data', dump.docs.length)
+    setListHazard(listHazard.concat(result.docs))
     setIsFetching(false);
     return null;
   };
@@ -65,6 +102,7 @@ const ListHazard = ({database, navigation, route, listHazard, increment, regular
           keyExtractor={item => item.id}
           onRefresh={() => refresh(database)}
           refreshing={isFetching}
+          onEndReached={() => onEndReached(database)}
         />
       </View>
     </>
