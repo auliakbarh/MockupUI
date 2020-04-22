@@ -1,4 +1,4 @@
-import { createRxDatabase, addRxPlugin, isRxDatabase } from 'rxdb';
+import { createRxDatabase, addRxPlugin } from 'rxdb';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 
@@ -20,6 +20,10 @@ export const database = async () => {
         await db.collection({
             name: 'abl',
             schema: schemas.ABL,
+        })
+        await db.collection({
+            name: 'buma',
+            schema: schemas.BUMA,
         })
         return db;
     }).catch(e => {
