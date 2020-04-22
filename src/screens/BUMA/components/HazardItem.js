@@ -16,8 +16,8 @@ const HazardItem = ({hazards, onPress}) => (
       />
     </View>
     <View style={styles.descListHazard}>
-      <Text>{hazards.judulHazard}</Text>
-      <Text>{`${hazards.lokasi} - ${hazards.subLokasi}`}</Text>
+      <Text>{hazards.judulRequest}</Text>
+      <Text>{`${hazards.lokasi}`}</Text>
     </View>
     <View style={styles.timeListHazard}>
       <Text style={styles.time}>{getDate(hazards.createdAt)}</Text>

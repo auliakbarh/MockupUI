@@ -31,7 +31,7 @@ export default ({navigation, route, database}) => {
         placeholder={'Batch Insert'}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.buttonText}
-        onPress={() => batchInsert(10)}
+        onPress={() => batchInsert(10000)}
         disabled={isSync}
       />
       <Button

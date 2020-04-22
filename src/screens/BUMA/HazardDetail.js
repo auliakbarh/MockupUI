@@ -9,7 +9,7 @@ const HazardDetail = ({navigation, route}) => {
   try {
     const {
       createdAt,
-      judulHazard,
+      judulRequest,
       detailLaporan,
       lokasi,
       subLokasi,
@@ -28,7 +28,7 @@ const HazardDetail = ({navigation, route}) => {
 
         <View style={styles.detailItem}>
           <Text style={styles.label}>Judul:</Text>
-          <Text style={styles.detail}>{judulHazard}</Text>
+          <Text style={styles.detail}>{judulRequest}</Text>
         </View>
 
         <View style={styles.detailItem}>

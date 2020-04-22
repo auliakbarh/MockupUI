@@ -77,17 +77,12 @@ export default class Database {
       this.initDB()
         .then(db => {
           db.transaction(tx => {
-            tx.executeSql(
-              'SELECT * FROM Buma',
-              [],
-            ).then(([tx, results]) => {
+            tx.executeSql('SELECT * FROM Buma', []).then(([tx, results]) => {
               console.log('Query completed');
               var len = results.rows.length;
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i);
-                console.log(
-                  'Data =>', row
-                );
+                console.log('Data =>', row);
                 const data = row;
                 arrayData.push(data);
               }
@@ -221,35 +216,194 @@ export default class Database {
     });
   }
 
+  listData(search = '', sort = 'DESC', limit = 20, page = 1) {
+    return new Promise(resolve => {
+      let offset = (page - 1) * limit;
+      search = '%' + search + '%';
+      const arrayData = [];
+      this.initDB()
+        .then(db => {
+          db.transaction(tx => {
+            tx.executeSql(
+              `SELECT * FROM Buma WHERE judulRequest LIKE '${search}' ORDER BY createdAt ${sort} LIMIT ? OFFSET ?`,
+              [limit, offset],
+            ).then(([tx, results]) => {
+              console.log('Query completed');
+              var len = results.rows.length;
+              for (let i = 0; i < len; i++) {
+                let row = results.rows.item(i);
+                // console.log(
+                //   'Data =>', row
+                // );
+                const data = row;
+                arrayData.push(data);
+              }
+              console.log('Length =>', len);
+              resolve(arrayData);
+            });
+          })
+            .then(result => {
+              this.closeDatabase(db);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
+  }
+
   batchAdd(buma) {
-    return new Promise( async resolve => {
+    return new Promise(async resolve => {
       await this.initDB()
         .then(db => {
-          // db.beginTransaction()
-
-          // db.setTransactionSuccessful();
-          // db.endTransaction();
           db.transaction(tx => {
-            buma.forEach( async (data,index) => {
-              await tx.executeSql(
-                'INSERT INTO Buma VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [
-                  data.id,
-                  data.judulRequest,
-                  data.detailLaporan,
-                  data.lokasi,
-                  data.subLokasi,
-                  data.detailLokasi,
-                  data.createdAt,
-                  data.createdBy,
-                  data.updatedAt,
-                  data.updatedBy,
+            buma.forEach(async (data, index) => {
+              await tx
+                .executeSql(
+                  'INSERT INTO Buma VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                  [
+                    data.id,
+                    data.judulRequest,
+                    data.detailLaporan,
+                    data.lokasi,
+                    data.subLokasi,
+                    data.detailLokasi,
+                    data.createdAt,
+                    data.createdBy,
+                    data.updatedAt,
+                    data.updatedBy,
+                    data.deletedBy,
+                  ],
+                )
+                .then(([tx, results]) => {
+                  // resolve(results);
+                });
+            });
+          })
+            .then(result => {
+              this.closeDatabase(db);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
+  }
+
+  batchUpdate(buma) {
+    return new Promise(async resolve => {
+      await this.initDB()
+        .then(db => {
+          db.transaction(tx => {
+            buma.forEach(async (data, index) => {
+              await tx
+                .executeSql(
+                  'UPDATE Buma SET judulRequest = ?, detailLaporan = ?, lokasi = ?, subLokasi = ?, detailLokasi = ?, createdAt = ?, createdBy = ?, updatedAt = ?, updatedBy = ?, deletedBy = ? WHERE id = ?',
+                  [
+                    data.judulRequest,
+                    data.detailLaporan,
+                    data.lokasi,
+                    data.subLokasi,
+                    data.detailLokasi,
+                    data.createdAt,
+                    data.createdBy,
+                    data.updatedAt,
+                    data.updatedBy,
+                    data.deletedBy,
+                    data.id,
+                  ],
+                )
+                .then(([tx, results]) => {
+                  // resolve(results);
+                });
+            });
+          })
+            .then(result => {
+              this.closeDatabase(db);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
+  }
+
+  batchUpsert(buma) {
+    return new Promise(async resolve => {
+      await this.initDB()
+        .then(db => {
+          db.transaction(tx => {
+            buma.forEach(async (data, index) => {
+              await tx
+                .executeSql(
+                  'INSERT INTO Buma VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) SET judulRequest = ?, detailLaporan = ?, lokasi = ?, subLokasi = ?, detailLokasi = ?, createdAt = ?, createdBy = ?, updatedAt = ?, updatedBy = ?, deletedBy = ?',
+                  [
+                    //insert
+                    data.id,
+                    data.judulRequest,
+                    data.detailLaporan,
+                    data.lokasi,
+                    data.subLokasi,
+                    data.detailLokasi,
+                    data.createdAt,
+                    data.createdBy,
+                    data.updatedAt,
+                    data.updatedBy,
+                    data.deletedBy,
+                    //update
+                    data.judulRequest,
+                    data.detailLaporan,
+                    data.lokasi,
+                    data.subLokasi,
+                    data.detailLokasi,
+                    data.createdAt,
+                    data.createdBy,
+                    data.updatedAt,
+                    data.updatedBy,
+                    data.deletedBy,
+                  ],
+                )
+                .then(([tx, results]) => {
+                  // resolve(results);
+                });
+            });
+          })
+            .then(result => {
+              this.closeDatabase(db);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
+  }
+
+  batchDelete(buma) {
+    return new Promise(async resolve => {
+      await this.initDB()
+        .then(db => {
+          db.transaction(tx => {
+            buma.forEach(async (data, index) => {
+              await tx
+                .executeSql('UPDATE Buma SET deletedBy = ? WHERE id = ?', [
                   data.deletedBy,
-                ],
-              ).then(([tx, results]) => {
-                // resolve(results);
-              });
-              console.log('Ulang => ', index)
+                  data.id,
+                ])
+                .then(([tx, results]) => {
+                  // resolve(results);
+                });
             });
           })
             .then(result => {
@@ -270,12 +424,10 @@ export default class Database {
       this.initDB()
         .then(db => {
           db.transaction(tx => {
-            tx.executeSql('DELETE FROM Buma').then(
-              ([tx, results]) => {
-                console.log(results);
-                resolve(results);
-              },
-            );
+            tx.executeSql('DELETE FROM Buma').then(([tx, results]) => {
+              console.log(results);
+              resolve(results);
+            });
           })
             .then(result => {
               this.closeDatabase(db);

@@ -18,6 +18,7 @@ import TextInput from '../../components/TextInput';
 import Button from '../../components/Button';
 import endpoint from '../../config/endpoint';
 import {getUNIXTS} from '../../utils/UNIXTS';
+import batchInsert from '../../utils/insertData';
 
 const myIcon = (
   <Icon
@@ -215,7 +216,7 @@ const HazardFormComponent = ({database, navigation, route}) => {
           placeholder={'Submit'}
         />
         <Button
-          onPress={() => generate(database)}
+          onPress={() => batchInsert(10000)}
           disabled={isGenerating}
           buttonStyle={[styles.saveButton, {marginTop: scale(5)}]}
           textStyle={styles.saveButtonText}
