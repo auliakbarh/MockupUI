@@ -8,6 +8,8 @@ import {
 } from './randomData';
 import {getUNIXTS} from '../UNIXTS';
 
+import writeBacklog from "../writeBacklog";
+
 const makeHazard = (i) => {
     return {
         id: i,
@@ -27,11 +29,14 @@ export const generateBUMA = async db => {
             const hazards = times(i => makeHazard(i), 10000);
             console.log(hazards.length);
             console.log(hazards[0]);
+            // writeBacklog(JSON.stringify(hazards),'DUMMY DATA','generate');
 
             result = await db.buma.bulkInsert(hazards);
+            // result = result.success;
+            result = true;
         }
 
-        return result.success;
+        return result;
     } catch (e) {
         console.log(e);
         return false;
