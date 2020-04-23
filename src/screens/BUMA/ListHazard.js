@@ -1,6 +1,7 @@
 import React from 'react';
 import {StatusBar, View, FlatList} from 'react-native';
 import {connect} from 'react-redux';
+import {isRxDocument} from 'rxdb';
 
 import config from '../../config';
 import endpoint from '../../config/endpoint';
@@ -16,7 +17,12 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
 
   let sub = [];
 
-  const goToDetail = (detail, navigation) => {
+  const goToDetail = async (detail, navigation) => {
+    await detail.item.update({
+      $set: {
+        judulHazard: 'UPDATED JUDUL HAZARD BY VIEW DETAIL'
+      }
+    });
     navigation.navigate(screenName.HAZARD_DETAIL_SCREEN, {
       detail: detail.item,
     });
@@ -45,11 +51,12 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
 
   const refresh = async database => {
     setIsFetching(true);
+    /*
     let result = null;
     console.log('listHazard.length', listHazard.length);
     try{
       result = await database.buma.find().$.subscribe(hazard => {
-        console.log(hazard)
+        // console.log(hazard)
         setListHazard(hazard)
       });
 
@@ -60,6 +67,7 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
     }catch (e) {
       console.log(e)
     }
+    */
     // console.log(result)
 
     // console.log('result find', result);
@@ -93,8 +101,26 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
     return null;
   };
 
+  const subscribeHazardList = async (database) => {
+    let result = null;
+    console.log('listHazard.length', listHazard.length);
+    try{
+      result = await database.buma.find().$.subscribe(hazard => {
+        // console.log(hazard)
+        setListHazard(hazard)
+      });
+
+      sub.push(result);
+
+      console.log('sub', sub)
+
+    }catch (e) {
+      console.log(e)
+    }
+  }
+
   React.useEffect(() => {
-    refresh(database);
+    subscribeHazardList(database);
     return () => {
       console.log('UNMOUNTED');
       sub.forEach(sub => {
