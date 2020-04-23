@@ -4,9 +4,11 @@ import scale from '../../config/scale';
 import config from '../../config';
 import {getTime, getDate} from '../../utils/DateFormat';
 import * as screenName from '../../router/screenNames';
+import {isRxDocument} from 'rxdb';
 
 const HazardDetail = ({navigation, route}) => {
   try {
+    console.log('isRxDocument?', isRxDocument(route.params.detail));
     const {
       waktuLaporan,
       judulHazard,
