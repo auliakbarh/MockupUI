@@ -23,6 +23,8 @@ import seederBUMA from '../../utils/dummy-data/seeder1000.json';
 import {isRxCollection} from "rxdb";
 import schemas from "../../database/schemas";
 
+import {generateBUMA} from "../../utils/dummy-data/generateFunction";
+
 const myIcon = (
   <Icon
     name="hazard-lights"
@@ -148,6 +150,12 @@ const HazardFormComponent = ({database, navigation, route}) => {
     }
   };
 
+  const doInsert = async (collection, seeder) => {
+    const result = await collection.bulkInsert(seeder);
+    console.log('result success', result.success.length);
+    return result.success;
+  }
+
   const generate = async database => {
     try {
       setIsGenerating(true);
@@ -161,7 +169,9 @@ const HazardFormComponent = ({database, navigation, route}) => {
         console.log('isRxCollection buma:', isRxCollection(database.buma));
       }
 
-      const doneGenerating = await database.buma.pouch.bulkDocs({docs: seederBUMA});
+      // const doneGenerating = await database.buma.pouch.bulkDocs({docs: seederBUMA}); // don't use this
+      // const doneGenerating = await doInsert(database.buma, seederBUMA); // 1k data
+      const doneGenerating = await generateBUMA(database); // 10k data
 
       if (doneGenerating) {
         setIsGenerating(false);
