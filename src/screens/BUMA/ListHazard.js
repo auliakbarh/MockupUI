@@ -14,6 +14,8 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
   const [isFetching, setIsFetching] = React.useState(false);
   const [listHazard, setListHazard] = React.useState([]);
 
+  let sub = [];
+
   const goToDetail = (detail, navigation) => {
     navigation.navigate(screenName.HAZARD_DETAIL_SCREEN, {
       detail: detail.item,
@@ -46,24 +48,31 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
     let result = null;
     console.log('listHazard.length', listHazard.length);
     try{
-      result = await database.buma.pouch.find({selector:{},
-        limit:20,
-        skip: 0
+      result = await database.buma.find().$.subscribe(hazard => {
+        console.log(hazard)
+        setListHazard(hazard)
       });
+
+      sub.push(result);
+
+      console.log('sub', sub)
+
     }catch (e) {
       console.log(e)
     }
+    // console.log(result)
 
     // console.log('result find', result);
     // let dump = await database.buma.dump();
     // console.log('dump data', dump.docs.length)
-    setListHazard(result.docs)
+    // setListHazard(result)
     setIsFetching(false);
     return null;
   };
 
   const onEndReached = async database => {
     setIsFetching(true);
+    /*
     let result = null;
     console.log('listHazard.length', listHazard.length);
     try{
@@ -79,9 +88,22 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
     // let dump = await database.buma.dump();
     // console.log('dump data', dump.docs.length)
     setListHazard(listHazard.concat(result.docs))
+    */
     setIsFetching(false);
     return null;
   };
+
+  React.useEffect(() => {
+    refresh(database);
+    return () => {
+      console.log('UNMOUNTED');
+      sub.forEach(sub => {
+        console.log(sub)
+        const unsub = sub.unsubscribe();
+        console.log('unsubscribe', unsub);
+      });
+    };
+  }, []);
 
   return (
     <>
@@ -102,7 +124,7 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
           keyExtractor={item => item.id}
           onRefresh={() => refresh(database)}
           refreshing={isFetching}
-          onEndReached={() => onEndReached(database)}
+          // onEndReached={() => onEndReached(database)}
         />
       </View>
     </>
