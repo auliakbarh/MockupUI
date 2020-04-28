@@ -1,4 +1,3 @@
-import {times} from 'rambdax';
 import {
     dummy_title,
     dummy_detail,
@@ -11,7 +10,8 @@ import {getUNIXTS} from '../UNIXTS';
 const makeHazard = (i) => {
     return {
         id: i,
-        waktuLaporan: getUNIXTS() + i,
+        waktuLaporan: getUNIXTS(),
+        created_at: getUNIXTS(),
         judulHazard: dummy_title[i] || i.toString(),
         detailLaporan: dummy_detail[i] || i.toString(),
         lokasi: dummy_location[i] || i.toString(),
@@ -20,17 +20,28 @@ const makeHazard = (i) => {
     };
 };
 
-export const generateBUMA = async db => {
+export const generateBUMA = db => {
     try {
         let result = false;
         if (db) {
-            const hazards = times(i => makeHazard(i), 10000);
-            console.log(hazards.length);
-            console.log(hazards[0]);
+            const hazards = [...Array(10000).keys()].map(i => makeHazard(i));
+            // console.log(hazards.length);
+            // console.log(hazards[0]);
 
             // result = await db.buma.bulkInsert(hazards);
             // result = result.success;
-            result = true;
+            // result = true;
+
+            try{
+                db.write(() => {
+                    result = hazards.map(hazard => db.create('Hazard', hazard));
+                })
+
+                console.log(result.length);
+            }catch (e) {
+                console.log('error generate data', e)
+            }
+
         }
 
         return result;
