@@ -60,7 +60,7 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
     const listHazard =  database.objects('Hazard').sorted('waktuLaporan', true);
 
     function listener(hazard, changes) {
-      console.log('hazard in listener', hazard)
+      // console.log('hazard in listener', hazard)
       console.log('changes in listener', changes)
       setIsFetching(true);
       setListHazard(hazard);
@@ -100,7 +100,7 @@ const ListHazard = ({database, navigation, route, increment, regular}) => {
   React.useEffect(() => {
     const sub = subscribeHazardList(database);
     return () => {
-      console.log('UNMOUNTED', sub);
+      console.log('UNMOUNTED', sub[0].length);
       sub[0].removeListener(sub[1]);
       database.removeAllListeners();
     };
