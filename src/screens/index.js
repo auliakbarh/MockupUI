@@ -7,6 +7,13 @@ import * as screenName from '../router/screenNames';
 
 export default ({navigation, route, database}) => {
   const [isSync, setIsSync] = React.useState(false);
+
+  const clear = database => {
+      database.write(() => {
+          database.deleteAll();
+      });
+  }
+
   return (
     <View style={styles.mainContainer}>
       <StatusBar
@@ -33,7 +40,7 @@ export default ({navigation, route, database}) => {
         disabled={isSync}
       />
       <Button
-        onPress={() => console.log('reset database function not set yet')}
+        onPress={() => clear(database)}
         buttonStyle={[styles.buttonSync, {marginTop: scale(5)}]}
         textStyle={styles.saveButtonText}
         placeholder={'Reset Database'}
