@@ -40,7 +40,10 @@ const HazardFormComponent = ({database, navigation, route}) => {
   const submit = database => {
     setIsSubmitting(true);
 
-    const data = {
+    const lastUser = database.objects('Hazard').sorted('id', true)[0];
+    const highestId = lastUser == null ? 0 : lastUser.id;
+
+    let data = {
       created_at: getUNIXTS(),
       waktuLaporan: getUNIXTS(),
       judulHazard,
@@ -49,6 +52,10 @@ const HazardFormComponent = ({database, navigation, route}) => {
       subLokasi,
       detailLokasi,
     };
+
+    data.id = highestId == null ? 1 : highestId + 1;
+
+    console.log('data', data)
 
     let newHazard = null;
 
