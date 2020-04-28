@@ -19,6 +19,8 @@ import Button from '../../components/Button';
 import endpoint from '../../config/endpoint';
 import {getUNIXTS} from '../../utils/UNIXTS';
 
+import {generateBUMA} from "../../utils/dummy-data/generateFunction";
+
 const myIcon = (
   <Icon
     name="hazard-lights"
@@ -152,7 +154,7 @@ const HazardFormComponent = ({database, navigation, route}) => {
     try {
       setIsGenerating(true);
 
-      const doneGenerating = false;
+      const doneGenerating = generateBUMA(database);
 
       if (doneGenerating) {
         setIsGenerating(false);
