@@ -37,10 +37,11 @@ const HazardFormComponent = ({database, navigation, route}) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isGenerating, setIsGenerating] = React.useState(false);
 
-  const submit = async database => {
+  const submit = database => {
     setIsSubmitting(true);
 
     const data = {
+      created_at: getUNIXTS(),
       waktuLaporan: getUNIXTS(),
       judulHazard,
       detailLaporan,
@@ -68,7 +69,10 @@ const HazardFormComponent = ({database, navigation, route}) => {
           validation(data.detailLokasi)
       ) {
         console.log('do insert record to database.');
-        newHazard = false;
+        database.write(() => {
+          newHazard = database.create('Hazard', data);
+          console.log(newHazard)
+        });
       }
     } catch (e) {
       console.log(e);
